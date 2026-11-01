@@ -1,0 +1,733 @@
+{
+  "fecha_ejecucion": "2026-11-01 14:41",
+  "modo_qdrant": "Qdrant Cloud",
+  "coleccion": "guias_cardio_g13",
+  "modelo_embeddings": "intfloat/multilingual-e5-base",
+  "dimension": 768,
+  "corpus": [
+    {
+      "doc_id": "SCA",
+      "documento": "Síndrome coronario agudo",
+      "año": 2013,
+      "páginas PDF": 27,
+      "páginas indexadas": "8-26",
+      "palabras": 3982,
+      "caracteres": 25457,
+      "tokens_est": 6364,
+      "títulos": 24,
+      "secciones omitidas": 3,
+      "MB": 2.08
+    },
+    {
+      "doc_id": "HTA",
+      "documento": "Hipertensión arterial",
+      "año": 2013,
+      "páginas PDF": 16,
+      "páginas indexadas": "11-15",
+      "palabras": 1206,
+      "caracteres": 7676,
+      "tokens_est": 1919,
+      "títulos": 7,
+      "secciones omitidas": 0,
+      "MB": 3.11
+    },
+    {
+      "doc_id": "DIS",
+      "documento": "Dislipidemias (colesterol)",
+      "año": 2014,
+      "páginas PDF": 18,
+      "páginas indexadas": "9-17",
+      "palabras": 1980,
+      "caracteres": 13208,
+      "tokens_est": 3302,
+      "títulos": 15,
+      "secciones omitidas": 0,
+      "MB": 3.21
+    }
+  ],
+  "chunking": [
+    {
+      "configuración": "pequeño",
+      "tamaño": 500,
+      "solape": 75,
+      "fragmentos": 131,
+      "caracteres_media": 358,
+      "tokens_media": 90,
+      "tokens_max": 124,
+      "% termina en oración": 94.7,
+      "% con variable del dataset": 64.9
+    },
+    {
+      "configuración": "mediano",
+      "tamaño": 1000,
+      "solape": 150,
+      "fragmentos": 62,
+      "caracteres_media": 776,
+      "tokens_media": 194,
+      "tokens_max": 249,
+      "% termina en oración": 91.9,
+      "% con variable del dataset": 82.3
+    },
+    {
+      "configuración": "grande",
+      "tamaño": 2000,
+      "solape": 200,
+      "fragmentos": 28,
+      "caracteres_media": 1707,
+      "tokens_media": 427,
+      "tokens_max": 498,
+      "% termina en oración": 85.7,
+      "% con variable del dataset": 92.9
+    }
+  ],
+  "evaluacion_configs": [
+    {
+      "configuración": "pequeño",
+      "fragmentos": 131,
+      "hit@1": 0.9333333333333333,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "MRR": 0.9555555555555555,
+      "coseno top-1 (dominio)": 0.8881037910779317,
+      "coseno top-1 (fuera de dominio)": 0.7606102824211121,
+      "separación": 0.12749350865681963
+    },
+    {
+      "configuración": "mediano",
+      "fragmentos": 62,
+      "hit@1": 0.8,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "MRR": 0.8888888888888888,
+      "coseno top-1 (dominio)": 0.8801941514015198,
+      "coseno top-1 (fuera de dominio)": 0.7602679133415222,
+      "separación": 0.11992623805999758
+    },
+    {
+      "configuración": "grande",
+      "fragmentos": 28,
+      "hit@1": 0.8666666666666667,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "MRR": 0.9333333333333333,
+      "coseno top-1 (dominio)": 0.8701011697451274,
+      "coseno top-1 (fuera de dominio)": 0.7516577243804932,
+      "separación": 0.11844344536463425
+    }
+  ],
+  "config_elegida": "pequeño",
+  "puntos": 131,
+  "carga": {
+    "destino": "Qdrant Cloud",
+    "colección": "guias_cardio_g13",
+    "puntos": 131,
+    "lotes": 3,
+    "ms por lote (mediana)": 86,
+    "tiempo total (s)": 0.37,
+    "estado": "green",
+    "vectores (MB)": 0.4,
+    "payload (MB)": 0.13,
+    "% de 1 GB de la capa gratuita": 0.074
+  },
+  "metricas_nube": {
+    "preguntas": 15,
+    "hit@1": 0.9333333333333333,
+    "hit@3": 1.0,
+    "hit@5": 1.0,
+    "MRR": 0.9555555555555555,
+    "coseno top-1 medio (dominio)": 0.888103786,
+    "coseno top-1 medio (fuera de dominio)": 0.76061031,
+    "margen top-1 vs top-2": 0.02134630866666666,
+    "latencia Qdrant mediana (ms)": 77.5476769999841,
+    "latencia Qdrant p95 (ms)": 87.54953579991707
+  },
+  "umbral_relevancia": 0.8223810199999999,
+  "fuera_nube": {
+    "¿Cuál es la receta tradicional del ajiaco santafereño?": 0.7836733,
+    "¿Qué documentos necesito para sacar el pasaporte colombiano?": 0.78648007,
+    "¿Cómo configuro la red wifi de mi casa?": 0.77815354,
+    "¿Cómo se calcula el IVA de una factura?": 0.77913535,
+    "¿Cuál es la capital de Australia?": 0.732218,
+    "¿Qué equipo ganó el Mundial de fútbol de 2014?": 0.7040016
+  },
+  "consumo": {
+    "modelo": "intfloat/multilingual-e5-base",
+    "dimensión": 768,
+    "vectores": 221,
+    "lotes enviados al modelo": 0,
+    "textos enviados": 0,
+    "tomados de caché": 221,
+    "tokens estimados": 0,
+    "reintentos": 0,
+    "latencia media por lote (ms)": null,
+    "tiempo total (s)": 0.0
+  },
+  "efecto_prefijo_consulta": {
+    "con prefijo de consulta": {
+      "hit@1": 0.9333333333333333,
+      "hit@3": 1.0,
+      "MRR": 0.9555555555555555,
+      "coseno top-1 medio": 0.8881037910779317
+    },
+    "texto de la pregunta solo": {
+      "hit@1": 0.8,
+      "hit@3": 1.0,
+      "MRR": 0.8888888888888888,
+      "coseno top-1 medio": 0.8804882287979126
+    },
+    "diferencia": {
+      "hit@1": 0.1333333333333333,
+      "hit@3": 0.0,
+      "MRR": 0.06666666666666665,
+      "coseno top-1 medio": 0.007615562280019139
+    }
+  },
+  "embeddings_latencia_ms": [],
+  "sql": {
+    "Prevalencia por sexo": [
+      {
+        "sexo": "Hombre",
+        "pacientes": 206,
+        "pct_con_enfermedad": 55.3
+      },
+      {
+        "sexo": "Mujer",
+        "pacientes": 97,
+        "pct_con_enfermedad": 25.8
+      }
+    ],
+    "Prevalencia por grupo de edad": [
+      {
+        "grupo_edad": "29-44",
+        "pacientes": 55,
+        "pct_con_enfermedad": 25.5
+      },
+      {
+        "grupo_edad": "45-54",
+        "pacientes": 88,
+        "pct_con_enfermedad": 34.1
+      },
+      {
+        "grupo_edad": "55-64",
+        "pacientes": 119,
+        "pct_con_enfermedad": 63.0
+      },
+      {
+        "grupo_edad": "65-77",
+        "pacientes": 41,
+        "pct_con_enfermedad": 48.8
+      }
+    ],
+    "Factores de riesgo según diagnóstico": [
+      {
+        "diagnostico": "Con enfermedad",
+        "pacientes": 139,
+        "pct_presion_140": 38.8,
+        "pct_colesterol_240": 57.6,
+        "pct_glucemia_alta": 15.8,
+        "pct_angina_ejercicio": 54.7
+      },
+      {
+        "diagnostico": "Sin enfermedad",
+        "pacientes": 164,
+        "pct_presion_140": 26.8,
+        "pct_colesterol_240": 46.3,
+        "pct_glucemia_alta": 14.0,
+        "pct_angina_ejercicio": 14.0
+      }
+    ]
+  },
+  "demo": {
+    "Siento un dolor fuerte en el pecho que no se me quita, ¿qué debo hacer?": [
+      {
+        "rank": 1,
+        "score": 0.8827953,
+        "doc_id": "SCA",
+        "documento": "Síndrome coronario agudo",
+        "pagina_inicio": 26,
+        "pagina_fin": 26,
+        "seccion": "¿Cuándo puedo reiniciar la actividad sexual?",
+        "texto": "Si nuevamente presenta dolor fuerte que oprime el pecho, que no mejora con el reposo y dura más de 30 minutos, debe consultar inmediatamente al servicio de urgencias, porque es posible que esté sufriendo un nuevo infarto cardíaco."
+      },
+      {
+        "rank": 2,
+        "score": 0.8678201,
+        "doc_id": "SCA",
+        "documento": "Síndrome coronario agudo",
+        "pagina_inicio": 9,
+        "pagina_fin": 9,
+        "seccion": "¿Cómo puedo saber que estoy sufriendo un Síndrome Coronario Agudo?",
+        "texto": "El principal síntoma es la presencia y persistencia de un dolor fuerte que oprime el pecho, que puede presentarse aún en estado de reposo y permanece luego de suspender el esfuerzo físico. Además puede acompañarse de otros síntomas tales como: mareo, sudoración y sensación de ahogo. Como varias enfermedades pueden causar estos síntomas, es importante que ante la presencia y persistencia de ellos se consulte al médico antes de 30 minutos, para recibir prontamente un diagnóstico adecuado."
+      },
+      {
+        "rank": 3,
+        "score": 0.8621892,
+        "doc_id": "SCA",
+        "documento": "Síndrome coronario agudo",
+        "pagina_inicio": 10,
+        "pagina_fin": 10,
+        "seccion": "¿Qué atención médica debo recibir antes de llegar al hospital?",
+        "texto": "Atención médica en los primeros 30 minutos después de identificar los síntomas: dolor fuerte que oprime el pecho, que no mejora con el reposo.\n\nEn el sitio de atención (hospital, centro de salud o ambulancia) debe practicarse a la mayor brevedad un electrocardiograma (examen que mide y representa gráficamente la actividad eléctrica del corazón) primero para confirmar si se trata o no de un infarto y luego para clasificarlo según la elevación o no del segmento ST."
+      }
+    ],
+    "¿Desde qué cifra se considera que uno tiene la tensión alta?": [
+      {
+        "rank": 1,
+        "score": 0.8354548,
+        "doc_id": "HTA",
+        "documento": "Hipertensión arterial",
+        "pagina_inicio": 12,
+        "pagina_fin": 12,
+        "seccion": "¿Cómo saber si uno tiene hipertensión arterial?",
+        "texto": "Un profesional de la salud le hará esta medición apropiadamente. Si ésta se encuentra entre 140 y 160 (la primera cifra o presión sistólica) o entre 90 y 100 (la segunda cifra o presión diastólica), su médico probablemente requiera un mayor número de mediciones, por ejemplo en su casa, con un tensiómetro automatizado que permite varios registros durante el día o la noche. De esta forma el médico podrá asegurarse que su presión arterial esté en los niveles adecuados."
+      },
+      {
+        "rank": 2,
+        "score": 0.8269593,
+        "doc_id": "HTA",
+        "documento": "Hipertensión arterial",
+        "pagina_inicio": 11,
+        "pagina_fin": 11,
+        "seccion": "¿Qué es la hipertensión arterial?",
+        "texto": "La presión arterial habitual en el adulto no debería ser mayor de 120/80mmHg. Cuando ésta se encuentra entre 120/80mmHg y 140/90mmHg se dice que la persona tiene “pre-hipertensión arterial” o “presión normal alta”. Cuando la presión arterial se encuentra por encima de 140/90 mmHg se considera que la persona tiene hipertensión arterial."
+      },
+      {
+        "rank": 3,
+        "score": 0.81527805,
+        "doc_id": "HTA",
+        "documento": "Hipertensión arterial",
+        "pagina_inicio": 13,
+        "pagina_fin": 13,
+        "seccion": "¿Cómo estoy seguro que el tratamiento que tomo para controlar mi presión arterial está funcionando adecuadamente?",
+        "texto": "Para esto, un profesional de la salud le debe tomar la presión arterial. En caso de encontrar cifras elevadas (o para cerciorarse que se mantengan en los niveles adecuados) su médico le recomendará hacer mediciones frecuentes con un tensiómetro automatizado en su propia casa o en una institución de salud. También le puede realizar algunos exámenes especiales de los riñones y el corazón o enviarlo a una valoración por el oftalmólogo."
+      }
+    ],
+    "¿Qué alimentos debo evitar si tengo el colesterol alto?": [
+      {
+        "rank": 1,
+        "score": 0.887663,
+        "doc_id": "SCA",
+        "documento": "Síndrome coronario agudo",
+        "pagina_inicio": 20,
+        "pagina_fin": 20,
+        "seccion": "¿Con cuáles alimentos tengo que tener cuidado?",
+        "texto": "Los mariscos contienen poca grasa y son de buena calidad pero algunos, como los calamares, camarones, langostinos y la langosta, contienen niveles significativos de colesterol; a los consumidores habituales de mariscos se recomienda disminuir la frecuencia y moderar la cantidad de su consumo o preferir aquellos cuyo contenido de colesterol es bajo, tales como los mejillones, las almejas, el cangrejo, las ostras y el caracol.\n\n¿Cuáles alimentos definitivamente debo evitar?"
+      },
+      {
+        "rank": 2,
+        "score": 0.88371253,
+        "doc_id": "SCA",
+        "documento": "Síndrome coronario agudo",
+        "pagina_inicio": 20,
+        "pagina_fin": 21,
+        "seccion": "¿Cuáles alimentos definitivamente debo evitar?",
+        "texto": "Los aceites vegetales no contienen colesterol pero el coco y el aceite de palma sí tienen mayor proporción de ácidos grasos saturados, por lo tanto se deben evitar los alimentos preparados con coco como los dulces y el arroz de coco. También se recomienda prescindir de los alimentos procesados que aporten cantidades significativas de grasa saturada como los paquetes de snacks o mecatos, por ej. las: papitas, yuquitas, los platanitos y demás."
+      },
+      {
+        "rank": 3,
+        "score": 0.8776101,
+        "doc_id": "SCA",
+        "documento": "Síndrome coronario agudo",
+        "pagina_inicio": 21,
+        "pagina_fin": 21,
+        "seccion": "¿Cómo interpreto la etiqueta de datos nutricionales de los alimentos?",
+        "texto": "La regla general es que el 20% de los valores nutricionales diarios o más es alto, y 5% de los valores diarios o menos es bajo. En la prevención y el control de los factores de riesgo para enfermedad coronaria se recomienda mantener un consumo de grasas saturadas, grasas trans y colesterol lo más bajo posible; en cambio para la fibra se sugiere el nivel más alto."
+      }
+    ]
+  },
+  "hibrida": {
+    "paciente_id": 127,
+    "alertas": [
+      "trestbps",
+      "chol",
+      "fbs",
+      "restecg",
+      "exang",
+      "oldpeak",
+      "ca",
+      "thal"
+    ],
+    "consulta": "Paciente de 56 años con presión arterial de 200 mm Hg y colesterol total de 288 mg/dl con enfermedad coronaria: ¿qué recomiendan las guías para controlar la presión arterial, el colesterol y reducir el riesgo cardiovascular?",
+    "resultados": [
+      {
+        "rank": 1,
+        "score": 0.8783302,
+        "doc_id": "SCA",
+        "documento": "Síndrome coronario agudo",
+        "pagina_inicio": 21,
+        "seccion": "¿Cómo interpreto la etiqueta de datos nutricionales de los alimentos?",
+        "variables": [
+          "chol",
+          "enfermedad"
+        ],
+        "texto": "La regla general es que el 20% de los valores nutricionales diarios o más es alto, y 5% de los valores diarios o menos es bajo. En la prevención y el control de los factores de riesgo para enfermedad coronaria se recomienda mantener un consumo de grasas saturadas, grasas trans y colesterol lo más bajo posible; en cambio para la fibra se sugiere el nivel más alto."
+      },
+      {
+        "rank": 2,
+        "score": 0.8605554,
+        "doc_id": "HTA",
+        "documento": "Hipertensión arterial",
+        "pagina_inicio": 14,
+        "seccion": "¿Cómo estoy seguro que el tratamiento que tomo para controlar mi presión arterial está funcionando adecuadamente?",
+        "variables": [
+          "trestbps"
+        ],
+        "texto": "También podrán recomendarle que ingrese a un programa de hipertensión donde varios profesionales realizarán junto a usted distintas actividades de salud.\n\n¿Qué impacto tiene en mi vida tener un buen manejo para la hipertensión arterial?"
+      },
+      {
+        "rank": 3,
+        "score": 0.8592936,
+        "doc_id": "HTA",
+        "documento": "Hipertensión arterial",
+        "pagina_inicio": 12,
+        "seccion": "¿Quiénes están en mayor riesgo de tener hipertensión arterial?",
+        "variables": [
+          "age",
+          "trestbps",
+          "exang"
+        ],
+        "texto": "• Mayores de 35 años\n• Personas con sobrepeso\n• Quienes no realizan ejercicio físico regularmente\n• Las personas con familiares que hayan sufrido de hipertensión arterial\n• Quienes fuman regularmente\n\nSi usted tiene una o varias de estas características, es aún más importante que conozca sus valores de presión arterial. Su médico le dirá los pasos a seguir de acuerdo a los valores que encuentre.\n\n¿Cómo se previene la hipertensión arterial?"
+      },
+      {
+        "rank": 4,
+        "score": 0.8588452,
+        "doc_id": "HTA",
+        "documento": "Hipertensión arterial",
+        "pagina_inicio": 13,
+        "seccion": "¿Cómo estoy seguro que el tratamiento que tomo para controlar mi presión arterial está funcionando adecuadamente?",
+        "variables": [
+          "trestbps"
+        ],
+        "texto": "En caso de no tener la presión arterial controlada, se deben mirar aspectos a reforzar y que puedan mejorar su manejo, como son:\n\n• Verificar que está cumpliendo con las actividades que ayudan a bajar su presión arterial (consumir poca sal, hacer ejercicio, etc.)\n• Verificar que se esté tomando el medicamento como se lo indicó el médico"
+      }
+    ]
+  },
+  "eval_nube": [
+    {
+      "pregunta": "¿A partir de qué cifras de presión arterial se considera que una persona tiene hipertensión?",
+      "documento esperado": "HTA",
+      "doc top-1": "HTA",
+      "coseno top-1": 0.90981776,
+      "coseno top-2": 0.89174294,
+      "primer acierto": 1,
+      "hit@1": 1,
+      "hit@3": 1,
+      "hit@5": 1,
+      "rr": 1.0
+    },
+    {
+      "pregunta": "¿Quiénes tienen más riesgo de desarrollar presión alta?",
+      "documento esperado": "HTA",
+      "doc top-1": "HTA",
+      "coseno top-1": 0.86875606,
+      "coseno top-2": 0.8572048,
+      "primer acierto": 3,
+      "hit@1": 0,
+      "hit@3": 1,
+      "hit@5": 1,
+      "rr": 0.3333333333333333
+    },
+    {
+      "pregunta": "¿Cuánto baja el riesgo de infarto si reduzco 10 mmHg mi presión sistólica?",
+      "documento esperado": "HTA",
+      "doc top-1": "HTA",
+      "coseno top-1": 0.9062527,
+      "coseno top-2": 0.84441394,
+      "primer acierto": 1,
+      "hit@1": 1,
+      "hit@3": 1,
+      "hit@5": 1,
+      "rr": 1.0
+    },
+    {
+      "pregunta": "¿Cómo sé si el tratamiento para la presión alta me está funcionando?",
+      "documento esperado": "HTA",
+      "doc top-1": "HTA",
+      "coseno top-1": 0.88775325,
+      "coseno top-2": 0.8645874,
+      "primer acierto": 1,
+      "hit@1": 1,
+      "hit@3": 1,
+      "hit@5": 1,
+      "rr": 1.0
+    },
+    {
+      "pregunta": "¿Cuál es el síntoma principal de un infarto y en cuánto tiempo debo consultar?",
+      "documento esperado": "SCA",
+      "doc top-1": "SCA",
+      "coseno top-1": 0.8875231,
+      "coseno top-2": 0.8835168,
+      "primer acierto": 1,
+      "hit@1": 1,
+      "hit@3": 1,
+      "hit@5": 1,
+      "rr": 1.0
+    },
+    {
+      "pregunta": "¿Para qué me hacen un electrocardiograma si llego a urgencias con dolor en el pecho?",
+      "documento esperado": "SCA",
+      "doc top-1": "SCA",
+      "coseno top-1": 0.89732194,
+      "coseno top-2": 0.8697694,
+      "primer acierto": 1,
+      "hit@1": 1,
+      "hit@3": 1,
+      "hit@5": 1,
+      "rr": 1.0
+    },
+    {
+      "pregunta": "¿Qué es un stent y para qué se coloca?",
+      "documento esperado": "SCA",
+      "doc top-1": "SCA",
+      "coseno top-1": 0.8730277,
+      "coseno top-2": 0.8641552,
+      "primer acierto": 1,
+      "hit@1": 1,
+      "hit@3": 1,
+      "hit@5": 1,
+      "rr": 1.0
+    },
+    {
+      "pregunta": "¿Qué incluye un programa de rehabilitación cardíaca?",
+      "documento esperado": "SCA",
+      "doc top-1": "SCA",
+      "coseno top-1": 0.92399365,
+      "coseno top-2": 0.8966763,
+      "primer acierto": 1,
+      "hit@1": 1,
+      "hit@3": 1,
+      "hit@5": 1,
+      "rr": 1.0
+    },
+    {
+      "pregunta": "¿Qué medicamentos debo seguir tomando en casa después de un infarto?",
+      "documento esperado": "SCA",
+      "doc top-1": "SCA",
+      "coseno top-1": 0.8804527,
+      "coseno top-2": 0.87814635,
+      "primer acierto": 1,
+      "hit@1": 1,
+      "hit@3": 1,
+      "hit@5": 1,
+      "rr": 1.0
+    },
+    {
+      "pregunta": "¿Cuántas porciones de frutas y verduras debo comer al día para cuidar el corazón?",
+      "documento esperado": "SCA",
+      "doc top-1": "SCA",
+      "coseno top-1": 0.8886078,
+      "coseno top-2": 0.8507581,
+      "primer acierto": 1,
+      "hit@1": 1,
+      "hit@3": 1,
+      "hit@5": 1,
+      "rr": 1.0
+    },
+    {
+      "pregunta": "¿Cuál es la diferencia entre el colesterol bueno y el colesterol malo?",
+      "documento esperado": "DIS",
+      "doc top-1": "DIS",
+      "coseno top-1": 0.85828197,
+      "coseno top-2": 0.854494,
+      "primer acierto": 1,
+      "hit@1": 1,
+      "hit@3": 1,
+      "hit@5": 1,
+      "rr": 1.0
+    },
+    {
+      "pregunta": "¿Tengo que ir en ayunas al examen del colesterol?",
+      "documento esperado": "DIS",
+      "doc top-1": "DIS",
+      "coseno top-1": 0.86364347,
+      "coseno top-2": 0.85293233,
+      "primer acierto": 1,
+      "hit@1": 1,
+      "hit@3": 1,
+      "hit@5": 1,
+      "rr": 1.0
+    },
+    {
+      "pregunta": "¿Qué medicamentos se usan para bajar el colesterol?",
+      "documento esperado": "DIS",
+      "doc top-1": "DIS",
+      "coseno top-1": 0.87222695,
+      "coseno top-2": 0.8676429,
+      "primer acierto": 1,
+      "hit@1": 1,
+      "hit@3": 1,
+      "hit@5": 1,
+      "rr": 1.0
+    },
+    {
+      "pregunta": "¿Qué efectos secundarios pueden dar las estatinas?",
+      "documento esperado": "DIS",
+      "doc top-1": "DIS",
+      "coseno top-1": 0.89390707,
+      "coseno top-2": 0.8775597,
+      "primer acierto": 1,
+      "hit@1": 1,
+      "hit@3": 1,
+      "hit@5": 1,
+      "rr": 1.0
+    },
+    {
+      "pregunta": "Si mi perfil lipídico salió normal, ¿cada cuánto debo repetirlo?",
+      "documento esperado": "DIS",
+      "doc top-1": "DIS",
+      "coseno top-1": 0.90999067,
+      "coseno top-2": 0.847762,
+      "primer acierto": 1,
+      "hit@1": 1,
+      "hit@3": 1,
+      "hit@5": 1,
+      "rr": 1.0
+    }
+  ],
+  "comparacion_modelos": [
+    {
+      "index": "intfloat/multilingual-e5-base (abierto)",
+      "hit@1": 0.9333333333333333,
+      "hit@3": 1.0,
+      "MRR": 0.9555555555555555,
+      "coseno top-1 (dominio)": 0.8881037910779317,
+      "coseno top-1 (fuera de dominio)": 0.7606102824211121,
+      "separación": 0.12749350865681963,
+      "dónde corre": "Colab, sin clave",
+      "costo (USD)": 0.0
+    },
+    {
+      "index": "text-embedding-3-large (OpenAI)",
+      "hit@1": 0.9333333333333333,
+      "hit@3": 1.0,
+      "MRR": 0.9666666666666667,
+      "coseno top-1 (dominio)": 0.7127055644989013,
+      "coseno top-1 (fuera de dominio)": 0.27698418498039246,
+      "separación": 0.43572137951850887,
+      "dónde corre": "API de pago",
+      "costo (USD)": 0.0016
+    }
+  ],
+  "comparacion_detalle": [
+    {
+      "pregunta": "¿A partir de qué cifras de presión arterial se considera que una persona tiene hipertensión?",
+      "coseno E5": 0.9098176956176758,
+      "coseno OpenAI": 0.6778013706207275,
+      "acierto E5": 1,
+      "acierto OpenAI": 1,
+      "mismo fragmento top-1": 1
+    },
+    {
+      "pregunta": "¿Quiénes tienen más riesgo de desarrollar presión alta?",
+      "coseno E5": 0.868756115436554,
+      "coseno OpenAI": 0.7899107933044434,
+      "acierto E5": 0,
+      "acierto OpenAI": 0,
+      "mismo fragmento top-1": 0
+    },
+    {
+      "pregunta": "¿Cuánto baja el riesgo de infarto si reduzco 10 mmHg mi presión sistólica?",
+      "coseno E5": 0.9062527418136597,
+      "coseno OpenAI": 0.7230656147003174,
+      "acierto E5": 1,
+      "acierto OpenAI": 1,
+      "mismo fragmento top-1": 1
+    },
+    {
+      "pregunta": "¿Cómo sé si el tratamiento para la presión alta me está funcionando?",
+      "coseno E5": 0.8877531290054321,
+      "coseno OpenAI": 0.8307037949562073,
+      "acierto E5": 1,
+      "acierto OpenAI": 1,
+      "mismo fragmento top-1": 1
+    },
+    {
+      "pregunta": "¿Cuál es el síntoma principal de un infarto y en cuánto tiempo debo consultar?",
+      "coseno E5": 0.8875231742858887,
+      "coseno OpenAI": 0.6815662980079651,
+      "acierto E5": 1,
+      "acierto OpenAI": 1,
+      "mismo fragmento top-1": 0
+    },
+    {
+      "pregunta": "¿Para qué me hacen un electrocardiograma si llego a urgencias con dolor en el pecho?",
+      "coseno E5": 0.8973220586776733,
+      "coseno OpenAI": 0.6846181154251099,
+      "acierto E5": 1,
+      "acierto OpenAI": 1,
+      "mismo fragmento top-1": 1
+    },
+    {
+      "pregunta": "¿Qué es un stent y para qué se coloca?",
+      "coseno E5": 0.8730278015136719,
+      "coseno OpenAI": 0.6633837223052979,
+      "acierto E5": 1,
+      "acierto OpenAI": 1,
+      "mismo fragmento top-1": 0
+    },
+    {
+      "pregunta": "¿Qué incluye un programa de rehabilitación cardíaca?",
+      "coseno E5": 0.9239935874938965,
+      "coseno OpenAI": 0.7769867181777954,
+      "acierto E5": 1,
+      "acierto OpenAI": 1,
+      "mismo fragmento top-1": 1
+    },
+    {
+      "pregunta": "¿Qué medicamentos debo seguir tomando en casa después de un infarto?",
+      "coseno E5": 0.8804527521133423,
+      "coseno OpenAI": 0.7619483470916748,
+      "acierto E5": 1,
+      "acierto OpenAI": 1,
+      "mismo fragmento top-1": 1
+    },
+    {
+      "pregunta": "¿Cuántas porciones de frutas y verduras debo comer al día para cuidar el corazón?",
+      "coseno E5": 0.8886077404022217,
+      "coseno OpenAI": 0.6937321424484253,
+      "acierto E5": 1,
+      "acierto OpenAI": 1,
+      "mismo fragmento top-1": 1
+    },
+    {
+      "pregunta": "¿Cuál es la diferencia entre el colesterol bueno y el colesterol malo?",
+      "coseno E5": 0.8582819700241089,
+      "coseno OpenAI": 0.5793881416320801,
+      "acierto E5": 1,
+      "acierto OpenAI": 1,
+      "mismo fragmento top-1": 1
+    },
+    {
+      "pregunta": "¿Tengo que ir en ayunas al examen del colesterol?",
+      "coseno E5": 0.8636434078216553,
+      "coseno OpenAI": 0.6419634819030762,
+      "acierto E5": 1,
+      "acierto OpenAI": 1,
+      "mismo fragmento top-1": 1
+    },
+    {
+      "pregunta": "¿Qué medicamentos se usan para bajar el colesterol?",
+      "coseno E5": 0.8722269535064697,
+      "coseno OpenAI": 0.6620128154754639,
+      "acierto E5": 1,
+      "acierto OpenAI": 1,
+      "mismo fragmento top-1": 1
+    },
+    {
+      "pregunta": "¿Qué efectos secundarios pueden dar las estatinas?",
+      "coseno E5": 0.8939070701599121,
+      "coseno OpenAI": 0.7487070560455322,
+      "acierto E5": 1,
+      "acierto OpenAI": 1,
+      "mismo fragmento top-1": 1
+    },
+    {
+      "pregunta": "Si mi perfil lipídico salió normal, ¿cada cuánto debo repetirlo?",
+      "coseno E5": 0.909990668296814,
+      "coseno OpenAI": 0.7747950553894043,
+      "acierto E5": 1,
+      "acierto OpenAI": 1,
+      "mismo fragmento top-1": 1
+    }
+  ]
+}
