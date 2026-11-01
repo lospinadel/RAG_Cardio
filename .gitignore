@@ -1,0 +1,6 @@
+# Credenciales: nunca se suben
+.env
+# Archivos generados al ejecutar el notebook
+salidas/*.duckdb*
+__pycache__/
+.ipynb_checkpoints/

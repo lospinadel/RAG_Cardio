@@ -1,0 +1,12 @@
+openai>=1.40.0
+qdrant-client>=1.12.0
+duckdb>=1.1.0
+pymupdf>=1.24.0
+langchain-text-splitters>=0.3.0
+python-dotenv>=1.0.0
+pandas>=2.1
+numpy>=1.26
+matplotlib>=3.8
+scikit-learn>=1.4
+ipywidgets>=8.0
+sentence-transformers>=3.0
