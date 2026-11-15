@@ -6,7 +6,7 @@ import time
 import streamlit as st
 
 st.set_page_config(page_title="CardioGuía RAG · Grupo 13", page_icon=":material/monitor_heart:", layout="wide",
-                   initial_sidebar_state="expanded")
+                   initial_sidebar_state="auto")
 T0 = time.perf_counter()
 
 import estilo as es  # noqa: E402  (sistema de diseño de CardioRiesgo)
@@ -97,13 +97,15 @@ ss.setdefault("version_indice", 0)
 
 # --------------------------------------------------------------------------- barra lateral
 with st.sidebar:
-    es.bloque(f'''<div class="cr-side"><div class="cr-side-marca">{es.ICONO_MONITOR}CardioGuía RAG</div>
-<p>Chatbot sobre las guías para pacientes del Ministerio de Salud: síndrome coronario agudo,
-hipertensión arterial y dislipidemias.</p><div class="cr-side-titulo">Modelo de lenguaje</div></div>''')
+    es.bloque(f"""
+<div class="cr-side">
+  <div class="cr-side-marca">{es.ICONO_MARCA}<span>CardioGuía RAG</span></div>
+  <p>Chatbot sobre las guías para pacientes del Ministerio de Salud: infarto, presión alta y colesterol.</p>
+</div>""")
     LLM = None
     if PROVEEDORES_OK:
-        proveedor = st.selectbox("Proveedor", PROVEEDORES_OK, format_func=lambda p: rc.PROVEEDORES[p]["nombre"],
-                                 label_visibility="collapsed")
+        proveedor = st.selectbox("Modelo de lenguaje", PROVEEDORES_OK, format_func=lambda p: rc.PROVEEDORES[p]["nombre"],
+                                 help="Proveedor del LLM que redacta la respuesta con los fragmentos recuperados.")
         try:
             LLM = obtener_llm(proveedor)
             st.caption(f"Modelo activo: `{LLM.modelo}`")
@@ -120,7 +122,6 @@ hipertensión arterial y dislipidemias.</p><div class="cr-side-titulo">Modelo de
     guias = st.multiselect("Buscar solo en", list(rc.NOMBRE_CORTO), format_func=rc.NOMBRE_CORTO.get,
                            placeholder="Todas las guías")
 
-    es.bloque('<div class="cr-side"><div class="cr-side-titulo">Perfil de paciente (opcional)</div></div>')
     usar_perfil = st.toggle("Responder pensando en un paciente del dataset UCI", value=False)
     PERFIL, TERMINOS = None, []
     if usar_perfil:
@@ -135,13 +136,23 @@ hipertensión arterial y dislipidemias.</p><div class="cr-side-titulo">Modelo de
         ss.reinicios = ss.get("reinicios", 0) + 1
         st.rerun()
 
-    es.bloque(f'''<div class="cr-side"><div class="cr-side-titulo">Conexión</div><dl>
-<div><dt>Base vectorial</dt><dd>{BASE.modo}</dd></div>
-<div><dt>Colección</dt><dd>{COLECCION}</dd></div>
-<div><dt>Embeddings</dt><dd>{MSG_EMB}</dd></div>
-<div><dt>Umbral de relevancia</dt><dd>coseno ≥ {es.num(rc.UMBRAL_RELEVANCIA[EMBEDDER.clave], 3)}</dd></div></dl>
-<p class="cr-side-aviso">Proyecto académico. No reemplaza la consulta médica: ante dolor en el pecho que no cede, acuda a urgencias.</p>
-</div>''')
+    integrantes = "".join(f"<li>{n}</li>" for n in ["Daimer Cardona Rojas", "Cristhian Eduardo Cortes Martha",
+                                                     "Juan Manuel Guerrero Tupaz", "Luis Alberto Ospina Delgado",
+                                                     "Jhonny Mauricio Rosero Carpio"])
+    es.bloque(f"""
+<div class="cr-side">
+  <dl>
+    <div><dt>Base vectorial</dt><dd>{"Qdrant Cloud" if "Cloud" in BASE.modo else "En memoria"}</dd></div>
+    <div><dt>Fragmentos</dt><dd>{es.num(BASE.estado(COLECCION).get("puntos", 0), 0)}</dd></div>
+    <div><dt>Embeddings</dt><dd>{"E5" if EMBEDDER.clave == "e5" else "OpenAI"} · {rc.DIMENSION}</dd></div>
+    <div><dt>Umbral de relevancia</dt><dd>{es.num(rc.UMBRAL_RELEVANCIA[EMBEDDER.clave], 3)}</dd></div>
+  </dl>
+  <p class="cr-side-titulo">Grupo 13</p>
+  <ul>{integrantes}</ul>
+  <p style="margin-top:10px">Computación en la Nube, CUN<br>Docente: Hamilton Rivera Flor</p>
+  <p class="cr-side-aviso">Herramienta académica. No reemplaza la consulta médica: ante dolor en el pecho que no cede, acuda a urgencias.</p>
+</div>""")
+    st.caption(f"Colección `{COLECCION}` · {MSG_EMB}")
 
 bot = rc.ChatbotRAG(BASE, EMBEDDER, LLM, top_k=top_k) if LLM else None
 AVISO.empty()
@@ -159,7 +170,7 @@ def tarjeta_fuente(n, f, citada):
 
 def mostrar_detalle(turno):
     t = turno["tiempos"]
-    partes = [f"Búsqueda <b>{es.num(t.get('embedding', 0) + t.get('qdrant', 0))} ms</b>",
+    partes = [f"Búsqueda <b>{es.num(t.get('embedding', 0) + t.get('qdrant', 0), 0)} ms</b>",
               f"LLM <b>{es.num(t.get('llm', 0) / 1000, 1)} s</b>" if t.get("llm") else "Sin llamada al LLM",
               f"Total <b>{es.num(t.get('total', 0) / 1000, 1)} s</b>"]
     if turno.get("tokens", {}).get("entrada"):
@@ -197,6 +208,7 @@ try:
 except Exception:
     PUNTOS = 0
 fiel = RES["resumen_dominio"]["fiel (juez)"] if RES else None
+MODO_OSCURO, ESCALA = es.controles()
 primera_vez = not ss.get("_intro_vista", False)
 ss["_intro_vista"] = True
 es.encabezado(
@@ -204,10 +216,10 @@ es.encabezado(
     "Pregúntele a las guías del Ministerio de Salud sobre infarto, presión alta y colesterol. "
     "Respondemos solo con lo que dicen, citamos el fragmento y la página, y si la respuesta no está en ellas, lo decimos.",
     [es.canal("Guías indexadas", "3", "infarto, hipertensión y colesterol"),
-     es.canal("Fragmentos en Qdrant", es.num(PUNTOS), f"vectores de {rc.DIMENSION} dimensiones"),
+     es.canal("Fragmentos en Qdrant", es.num(PUNTOS, 0), f"vectores de {rc.DIMENSION} dimensiones"),
      es.canal("Modelo de lenguaje", LLM.modelo if LLM else "solo búsqueda", "cámbielo en la barra lateral", "modelo"),
      es.canal("Umbral de relevancia", es.num(rc.UMBRAL_RELEVANCIA[EMBEDDER.clave], 3), "por debajo, se abstiene", "umbral"),
-     es.canal("Respuestas fieles", f"{es.num(100 * fiel)} %" if fiel is not None else "—",
+     es.canal("Respuestas fieles", es.pct(fiel, 0) if fiel is not None else "—",
               "según el LLM juez, en la validación", "decision")],
     rc.RUTA_BASE / "assets" / "cun.png", animar=primera_vez)
 
@@ -343,11 +355,11 @@ with tab_indice:
     st.markdown("#### Estado del índice en Qdrant Cloud")
     estado = BASE.estado(COLECCION)
     es.fila_canales([
-        es.canal("Puntos", es.num(estado.get("puntos", 0)), "un vector por fragmento"),
+        es.canal("Puntos", es.num(estado.get("puntos", 0), 0), "un vector por fragmento"),
         es.canal("Estado", str(estado.get("estado", "—")), "salud de la colección", "decision"),
         es.canal("Dimensión", str(estado.get("dimensión", "—")), "tamaño de cada vector"),
         es.canal("Distancia", str(estado.get("distancia", "—")), "medida de similitud", "modelo"),
-        es.canal("Conexión", f"{es.num(BASE.ms_conexion)} ms", "al abrir el servidor")])
+        es.canal("Conexión", f"{es.num(BASE.ms_conexion, 0)} ms", "al abrir el servidor")])
     st.caption(f"Índices de payload: {', '.join(estado.get('índices de payload', [])) or '—'} · segmentos: "
                f"{estado.get('segmentos', '—')} · al iniciar: {ACCIONES.get(EMBEDDER.clave, '—')}")
     frag_df = listar_fragmentos(COLECCION, ss.version_indice)
@@ -356,12 +368,12 @@ with tab_indice:
         conteo["guía"] = conteo["doc_id"].map(lambda d: rc.NOMBRE_CORTO.get(d, d))
         import plotly.express as px
         fig = px.bar(conteo, x="fragmentos", y="guía", orientation="h", color="doc_id", text="fragmentos",
-                     color_discrete_map=COLOR_DOC, height=190)
-        fig.update_layout(showlegend=False, margin=dict(l=10, r=16, t=12, b=8), yaxis_title=None,
-                          paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-                          font=dict(family=es.FUENTE_CIFRAS, size=14, color="#475066"))
-        fig.update_xaxes(gridcolor="#e6e9ef", zeroline=False)
-        st.plotly_chart(fig, width="stretch")
+                     color_discrete_map=COLOR_DOC)
+        es.estilo(fig, alto=230, leyenda=False, titulo="Fragmentos por guía")
+        fig.update_traces(textposition="outside", cliponaxis=False, textfont=dict(color=es.TINTA_2, size=14))
+        fig.update_yaxes(title=None, gridcolor="rgba(0,0,0,0)")
+        fig.update_xaxes(title=None, showgrid=True, gridcolor=es.REJILLA)
+        es.mostrar(fig, ESCALA)
 
     st.markdown("#### Búsqueda semántica directa (sin LLM)")
     c1, c2 = st.columns([3, 1])
@@ -419,3 +431,5 @@ Jhonny Mauricio Rosero Carpio
 
 **Credenciales.** Se leen de los secrets de Streamlit o de variables de entorno; ninguna está en el código.
 """)
+
+es.scripts(MODO_OSCURO)
