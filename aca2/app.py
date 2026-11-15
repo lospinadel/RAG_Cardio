@@ -5,8 +5,13 @@ import time
 
 import streamlit as st
 
-st.set_page_config(page_title="CardioGuía RAG", page_icon="🫀", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="CardioGuía RAG · Grupo 13", page_icon=":material/monitor_heart:", layout="wide",
+                   initial_sidebar_state="expanded")
 T0 = time.perf_counter()
+
+import estilo as es  # noqa: E402  (sistema de diseño de CardioRiesgo)
+
+es.aplicar()
 
 
 def registro(paso):
@@ -23,24 +28,12 @@ import pandas as pd
 import rag_core as rc
 registro("librerías cargadas")
 
-COLOR_DOC = {"SCA": "#c2410c", "HTA": "#1d4ed8", "DIS": "#0f766e"}
+COLOR_DOC = es.COLOR_DOC
 EJEMPLOS = ["¿Desde qué cifra se considera que uno tiene la tensión alta?",
             "Siento un dolor fuerte en el pecho que no se me quita, ¿qué debo hacer?",
             "¿Qué alimentos debo evitar si tengo el colesterol alto?",
             "¿Qué cuidados debo tener cuando me den de alta después de un infarto?"]
 
-st.markdown("""
-<style>
-.block-container {padding-top: 1.6rem; max-width: 1280px;}
-.cg-fuente {border: 1px solid #dbe3ee; border-left: 5px solid var(--c); border-radius: 8px; padding: 8px 12px;
-            margin: 6px 0; background: #fff; font-size: 0.88rem; line-height: 1.4;}
-.cg-fuente .cab {display: flex; justify-content: space-between; gap: 10px; font-weight: 600; color: #0f172a;}
-.cg-fuente .txt {color: #475569; margin-top: 4px;}
-.cg-tag {display: inline-block; font-size: 0.72rem; font-weight: 700; padding: 1px 7px; border-radius: 99px;
-         background: #e3f5f2; color: #0e7569; margin-left: 6px;}
-.cg-tag.no {background: #f1f5f9; color: #64748b;}
-.cg-kpi {font-size: 0.8rem; color: #64748b;}
-</style>""", unsafe_allow_html=True)
 
 
 # --------------------------------------------------------------------------- recursos (una vez por servidor)
@@ -104,12 +97,9 @@ ss.setdefault("version_indice", 0)
 
 # --------------------------------------------------------------------------- barra lateral
 with st.sidebar:
-    st.image(str(rc.RUTA_BASE / "assets" / "cun.png"), width=120)
-    st.markdown("### CardioGuía RAG")
-    st.caption("Chatbot sobre las guías para pacientes del Ministerio de Salud: síndrome coronario agudo, "
-               "hipertensión arterial y dislipidemias.")
-
-    st.markdown("**Modelo de lenguaje**")
+    es.bloque(f'''<div class="cr-side"><div class="cr-side-marca">{es.ICONO_MONITOR}CardioGuía RAG</div>
+<p>Chatbot sobre las guías para pacientes del Ministerio de Salud: síndrome coronario agudo,
+hipertensión arterial y dislipidemias.</p><div class="cr-side-titulo">Modelo de lenguaje</div></div>''')
     LLM = None
     if PROVEEDORES_OK:
         proveedor = st.selectbox("Proveedor", PROVEEDORES_OK, format_func=lambda p: rc.PROVEEDORES[p]["nombre"],
@@ -130,7 +120,7 @@ with st.sidebar:
     guias = st.multiselect("Buscar solo en", list(rc.NOMBRE_CORTO), format_func=rc.NOMBRE_CORTO.get,
                            placeholder="Todas las guías")
 
-    st.markdown("**Perfil de paciente (opcional)**")
+    es.bloque('<div class="cr-side"><div class="cr-side-titulo">Perfil de paciente (opcional)</div></div>')
     usar_perfil = st.toggle("Responder pensando en un paciente del dataset UCI", value=False)
     PERFIL, TERMINOS = None, []
     if usar_perfil:
@@ -145,9 +135,13 @@ with st.sidebar:
         ss.reinicios = ss.get("reinicios", 0) + 1
         st.rerun()
 
-    st.divider()
-    st.caption(f"🗄️ {BASE.modo} · `{COLECCION}`  \n🔤 {MSG_EMB}  \n"
-               f"🎯 umbral de relevancia: coseno ≥ {rc.UMBRAL_RELEVANCIA[EMBEDDER.clave]:.3f}")
+    es.bloque(f'''<div class="cr-side"><div class="cr-side-titulo">Conexión</div><dl>
+<div><dt>Base vectorial</dt><dd>{BASE.modo}</dd></div>
+<div><dt>Colección</dt><dd>{COLECCION}</dd></div>
+<div><dt>Embeddings</dt><dd>{MSG_EMB}</dd></div>
+<div><dt>Umbral de relevancia</dt><dd>coseno ≥ {es.num(rc.UMBRAL_RELEVANCIA[EMBEDDER.clave], 3)}</dd></div></dl>
+<p class="cr-side-aviso">Proyecto académico. No reemplaza la consulta médica: ante dolor en el pecho que no cede, acuda a urgencias.</p>
+</div>''')
 
 bot = rc.ChatbotRAG(BASE, EMBEDDER, LLM, top_k=top_k) if LLM else None
 AVISO.empty()
@@ -159,20 +153,20 @@ def tarjeta_fuente(n, f, citada):
     texto = f["texto"] if len(f["texto"]) <= 360 else f["texto"][:360].rsplit(" ", 1)[0] + " …"
     tag = '<span class="cg-tag">citada</span>' if citada else '<span class="cg-tag no">no citada</span>'
     return (f'<div class="cg-fuente" style="--c:{COLOR_DOC.get(f["doc_id"], "#64748b")}">'
-            f'<div class="cab"><span>[{n}] {rc.etiqueta_fuente(f)}{tag}</span><span>coseno {f["score"]:.3f}</span></div>'
+            f'<div class="cab"><span>[{n}] {rc.etiqueta_fuente(f)}{tag}</span><span class="cos">coseno {es.num(f["score"], 3)}</span></div>'
             f'<div class="txt">{texto}</div></div>')
 
 
 def mostrar_detalle(turno):
     t = turno["tiempos"]
-    partes = [f"🔎 búsqueda {t.get('embedding', 0) + t.get('qdrant', 0):.0f} ms",
-              f"🤖 LLM {t.get('llm', 0) / 1000:.1f} s" if t.get("llm") else "🤖 sin llamada al LLM",
-              f"⏱️ total {t.get('total', 0) / 1000:.1f} s"]
+    partes = [f"Búsqueda <b>{es.num(t.get('embedding', 0) + t.get('qdrant', 0))} ms</b>",
+              f"LLM <b>{es.num(t.get('llm', 0) / 1000, 1)} s</b>" if t.get("llm") else "Sin llamada al LLM",
+              f"Total <b>{es.num(t.get('total', 0) / 1000, 1)} s</b>"]
     if turno.get("tokens", {}).get("entrada"):
-        partes.append(f"🧾 {turno['tokens']['entrada']} + {turno['tokens']['salida']} tokens")
+        partes.append(f"Tokens <b>{turno['tokens']['entrada']} + {turno['tokens']['salida']}</b>")
     if turno.get("pregunta_busqueda") and turno["pregunta_busqueda"] != turno["pregunta"]:
-        partes.append(f"🔁 búsqueda reformulada: «{turno['pregunta_busqueda']}»")
-    st.markdown(f'<div class="cg-kpi">{" · ".join(partes)}</div>', unsafe_allow_html=True)
+        partes.append(f"Búsqueda reformulada: «{turno['pregunta_busqueda']}»")
+    st.markdown(f'<div class="cg-kpi">{"".join(f"<span>{p}</span>" for p in partes)}</div>', unsafe_allow_html=True)
     with st.expander(f"Fuentes recuperadas ({len(turno['fragmentos'])}) · citadas: "
                      f"{', '.join(f'[{c}]' for c in turno['citas']) or 'ninguna'}"):
         if turno.get("motivo"):
@@ -193,13 +187,35 @@ def turno_a_dict(r):
 
 
 # --------------------------------------------------------------------------- pestañas
+RUTA_RES = rc.RUTA_BASE / "datos" / "resultados_aca2.json"
+try:
+    RES = json.loads(RUTA_RES.read_text(encoding="utf-8"))
+except (OSError, ValueError):
+    RES = None
+try:
+    PUNTOS = BASE.estado(COLECCION).get("puntos", 0)
+except Exception:
+    PUNTOS = 0
+fiel = RES["resumen_dominio"]["fiel (juez)"] if RES else None
+primera_vez = not ss.get("_intro_vista", False)
+ss["_intro_vista"] = True
+es.encabezado(
+    ["ACA 2", "Grupo 13", "Computación en la Nube", "Especialización en IA, CUN"],
+    "Pregúntele a las guías del Ministerio de Salud sobre infarto, presión alta y colesterol. "
+    "Respondemos solo con lo que dicen, citamos el fragmento y la página, y si la respuesta no está en ellas, lo decimos.",
+    [es.canal("Guías indexadas", "3", "infarto, hipertensión y colesterol"),
+     es.canal("Fragmentos en Qdrant", es.num(PUNTOS), f"vectores de {rc.DIMENSION} dimensiones"),
+     es.canal("Modelo de lenguaje", LLM.modelo if LLM else "solo búsqueda", "cámbielo en la barra lateral", "modelo"),
+     es.canal("Umbral de relevancia", es.num(rc.UMBRAL_RELEVANCIA[EMBEDDER.clave], 3), "por debajo, se abstiene", "umbral"),
+     es.canal("Respuestas fieles", f"{es.num(100 * fiel)} %" if fiel is not None else "—",
+              "según el LLM juez, en la validación", "decision")],
+    rc.RUTA_BASE / "assets" / "cun.png", animar=primera_vez)
+
 tab_chat, tab_docs, tab_indice, tab_eval, tab_acerca = st.tabs(
-    ["💬 Chat", "📚 Documentos", "🧭 Índice vectorial", "✅ Evaluación", "ℹ️ Acerca de"])
+    [":material/chat: Chat", ":material/description: Documentos", ":material/hub: Índice vectorial",
+     ":material/fact_check: Evaluación", ":material/info: Acerca de"])
 
 with tab_chat:
-    st.markdown("#### Pregúntele a las guías")
-    st.caption("Las respuestas salen solo de las guías indexadas y citan el fragmento que las respalda. "
-               "Es una herramienta académica de orientación: no reemplaza la consulta médica.")
     zona = st.container()          # la conversación va arriba y la caja de escritura queda debajo
     escrita = st.chat_input("Escriba su pregunta sobre presión arterial, colesterol o infarto…")
     pendiente = None
@@ -211,7 +227,7 @@ with tab_chat:
         for turno in ss.historial:
             with st.chat_message("user"):
                 st.markdown(turno["pregunta"])
-            with st.chat_message("assistant", avatar="🫀"):
+            with st.chat_message("assistant", avatar=":material/monitor_heart:"):
                 st.markdown(turno["respuesta"])
                 mostrar_detalle(turno)
     pregunta = escrita or pendiente
@@ -219,7 +235,7 @@ with tab_chat:
       with zona:
           with st.chat_message("user"):
               st.markdown(pregunta)
-          with st.chat_message("assistant", avatar="🫀"):
+          with st.chat_message("assistant", avatar=":material/monitor_heart:"):
               if bot is None:
                   frag, tiempos = rc.ChatbotRAG(BASE, EMBEDDER, type("L", (), {"modelo": "—"})(), top_k).recuperar(
                       pregunta, top_k, guias or None)
@@ -233,13 +249,13 @@ with tab_chat:
                       st.markdown(r.texto)
                       r.tiempos["total"] = (time.perf_counter() - r._t0) * 1000
                   else:
-                      registro = {}
+                      salida_llm = {}
                       try:
-                          st.write_stream(LLM.transmitir(r.mensajes, registro, temperature=temperatura))
+                          st.write_stream(LLM.transmitir(r.mensajes, salida_llm, temperature=temperatura))
                       except Exception as e:
-                          registro = {"texto": f"El modelo no respondió ({type(e).__name__}). Intente de nuevo.", "ms": 0}
-                          st.error(registro["texto"])
-                      r = bot.finalizar(r, registro)
+                          salida_llm = {"texto": f"El modelo no respondió ({type(e).__name__}). Intente de nuevo.", "ms": 0}
+                          st.error(salida_llm["texto"])
+                      r = bot.finalizar(r, salida_llm)
                   turno = turno_a_dict(r)
                   ss.historial.append(turno)
                   mostrar_detalle(turno)
@@ -326,12 +342,12 @@ with tab_docs:
 with tab_indice:
     st.markdown("#### Estado del índice en Qdrant Cloud")
     estado = BASE.estado(COLECCION)
-    m = st.columns(5)
-    m[0].metric("Puntos", estado.get("puntos", 0))
-    m[1].metric("Estado", estado.get("estado", "—"))
-    m[2].metric("Dimensión", estado.get("dimensión", "—"))
-    m[3].metric("Distancia", estado.get("distancia", "—"))
-    m[4].metric("Conexión", f"{BASE.ms_conexion:.0f} ms")
+    es.fila_canales([
+        es.canal("Puntos", es.num(estado.get("puntos", 0)), "un vector por fragmento"),
+        es.canal("Estado", str(estado.get("estado", "—")), "salud de la colección", "decision"),
+        es.canal("Dimensión", str(estado.get("dimensión", "—")), "tamaño de cada vector"),
+        es.canal("Distancia", str(estado.get("distancia", "—")), "medida de similitud", "modelo"),
+        es.canal("Conexión", f"{es.num(BASE.ms_conexion)} ms", "al abrir el servidor")])
     st.caption(f"Índices de payload: {', '.join(estado.get('índices de payload', [])) or '—'} · segmentos: "
                f"{estado.get('segmentos', '—')} · al iniciar: {ACCIONES.get(EMBEDDER.clave, '—')}")
     frag_df = listar_fragmentos(COLECCION, ss.version_indice)
@@ -341,7 +357,10 @@ with tab_indice:
         import plotly.express as px
         fig = px.bar(conteo, x="fragmentos", y="guía", orientation="h", color="doc_id", text="fragmentos",
                      color_discrete_map=COLOR_DOC, height=190)
-        fig.update_layout(showlegend=False, margin=dict(l=0, r=10, t=10, b=0), yaxis_title=None)
+        fig.update_layout(showlegend=False, margin=dict(l=10, r=16, t=12, b=8), yaxis_title=None,
+                          paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                          font=dict(family=es.FUENTE_CIFRAS, size=14, color="#475066"))
+        fig.update_xaxes(gridcolor="#e6e9ef", zeroline=False)
         st.plotly_chart(fig, width="stretch")
 
     st.markdown("#### Búsqueda semántica directa (sin LLM)")
@@ -367,16 +386,14 @@ with tab_indice:
 
 # ----------------------------------------------------------------- evaluación
 with tab_eval:
-    ruta = rc.RUTA_BASE / "datos" / "resultados_aca2.json"
     st.markdown("#### Validación del chatbot (notebook del ACA 2)")
-    if not ruta.exists():
+    if RES is None:
         st.info("Aún no hay resultados: ejecute el notebook del ACA 2 y suba `datos/resultados_aca2.json` al repositorio.")
     else:
-        res = json.loads(ruta.read_text(encoding="utf-8"))
-        k = res.get("kpis", {})
-        cols = st.columns(4)
-        for col, (etq, val) in zip(cols, list(k.items())[:4]):
-            col.metric(etq, val)
+        res = RES
+        tipos = ["decision", "decision", "modelo", "datos"]
+        es.fila_canales([es.canal(etq, str(val).replace(".", ","), "", tipo)
+                         for (etq, val), tipo in zip(list(res.get("kpis", {}).items())[:4], tipos)])
         for nombre, filas in res.get("tablas", {}).items():
             st.markdown(f"**{nombre}**")
             st.dataframe(pd.DataFrame(filas), hide_index=True, width="stretch")
@@ -385,18 +402,20 @@ with tab_eval:
 # ----------------------------------------------------------------- acerca
 with tab_acerca:
     st.image(str(rc.RUTA_BASE / "assets" / "arquitectura_rag.png"), caption="Arquitectura RAG de punta a punta")
+    st.markdown("#### Cómo funciona")
+    es.bloque("""<ol class="cr-pasos">
+<li><strong>Reformula</strong><span>Si hay conversación previa, el LLM reescribe la pregunta para que se entienda sola.</span></li>
+<li><strong>Vectoriza</strong><span>Multilingual-E5 convierte la pregunta en un vector de 768 dimensiones.</span></li>
+<li><strong>Busca</strong><span>Qdrant Cloud devuelve los fragmentos más parecidos por coseno.</span></li>
+<li><strong>Filtra</strong><span>Si el mejor no supera el umbral calibrado en el ACA 1, se abstiene sin llamar al LLM.</span></li>
+<li><strong>Responde y cita</strong><span>El LLM responde solo con esos fragmentos y cita cada afirmación con [n].</span></li>
+</ol>""")
     st.markdown("""
-#### CardioGuía RAG · ACA 2 · Computación en la Nube para Sistemas Inteligentes
-**CUN · Especialización en Inteligencia Artificial · Docente: Hamilton Rivera Flor · Grupo 13**
+**CUN · Especialización en Inteligencia Artificial · Computación en la Nube para Sistemas Inteligentes ·
+Docente: Hamilton Rivera Flor · Grupo 13**
+
 Daimer Cardona Rojas · Cristhian Eduardo Cortes Martha · Juan Manuel Guerrero Tupaz · Luis Alberto Ospina Delgado ·
 Jhonny Mauricio Rosero Carpio
 
-**Cómo funciona.** 1) Si hay conversación previa, el LLM reescribe la pregunta para que sea autónoma.
-2) Multilingual-E5 la convierte en un vector de 768 dimensiones. 3) Qdrant Cloud devuelve los fragmentos más
-parecidos por coseno. 4) Si el mejor no supera el umbral calibrado en el ACA 1, el sistema se abstiene sin llamar al LLM.
-5) Si lo supera, el LLM responde solo con esos fragmentos y cita cada afirmación.
-
 **Credenciales.** Se leen de los secrets de Streamlit o de variables de entorno; ninguna está en el código.
-
-Proyecto académico. No reemplaza la consulta médica. Ante dolor en el pecho que no cede, acuda a urgencias.
 """)

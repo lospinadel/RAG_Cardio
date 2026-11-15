@@ -32,6 +32,7 @@ Pregunta ─▶ (si hay historial) LLM reescribe la pregunta ─▶ Multilingual
 |---|---|
 | `app.py` | Interfaz: chat con historial y fuentes, documentos, índice vectorial y evaluación |
 | `rag_core.py` | Núcleo RAG que usan la app y el notebook |
+| `estilo.py` y `.streamlit/config.toml` | Sistema de diseño compartido con CardioRiesgo (ACA 1 de Aprendizaje Automático): papel de ECG, canales de monitor, Saira y Atkinson Hyperlegible Next |
 | `ACA2_Nube_Grupo13_Chatbot_RAG.ipynb` | Notebook reproducible: conexión, LLM, pipeline, diálogos con citas y validación |
 | `datos/indice_aca1.json.gz` | Copia del índice del ACA 1 (131 fragmentos, vectores E5 y OpenAI, metadatos) para restaurar la colección |
 | `datos/processed.cleveland.data` | Dataset UCI Heart Disease (perfiles de paciente) |
