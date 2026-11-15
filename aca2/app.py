@@ -3,14 +3,25 @@
 import json
 import time
 
-import numpy as np
-import pandas as pd
-import plotly.express as px
 import streamlit as st
 
-import rag_core as rc
-
 st.set_page_config(page_title="CardioGuía RAG", page_icon="🫀", layout="wide", initial_sidebar_state="expanded")
+T0 = time.perf_counter()
+
+
+def registro(paso):
+    """Deja en el log de Streamlit Cloud cuánto tarda cada etapa del arranque."""
+    print(f"[cardioguia] {time.perf_counter() - T0:6.1f} s · {paso}", flush=True)
+
+
+AVISO = st.empty()
+AVISO.info("Iniciando CardioGuía RAG… la primera carga del servidor puede tardar 1 o 2 minutos.", icon=":material/hourglass_top:")
+registro("inicio del script")
+import numpy as np
+import pandas as pd
+
+import rag_core as rc
+registro("librerías cargadas")
 
 COLOR_DOC = {"SCA": "#c2410c", "HTA": "#1d4ed8", "DIS": "#0f766e"}
 EJEMPLOS = ["¿Desde qué cifra se considera que uno tiene la tensión alta?",
@@ -35,22 +46,30 @@ st.markdown("""
 # --------------------------------------------------------------------------- recursos (una vez por servidor)
 @st.cache_resource(show_spinner="Conectando con Qdrant Cloud…")
 def obtener_base():
+    registro("conectando con Qdrant")
     base = rc.BaseVectorial(rc.leer_secreto("QDRANT_URL"), rc.leer_secreto("QDRANT_API_KEY"))
+    registro(f"{base.modo} conectado en {base.ms_conexion:.0f} ms · colecciones: {base.colecciones}")
     snapshot = rc.cargar_snapshot()
     acciones = {"e5": base.asegurar_coleccion("e5", snapshot)}
     if rc.leer_secreto("OPENAI_API_KEY"):
         acciones["openai"] = base.asegurar_coleccion("openai", snapshot)
+    registro(f"colecciones verificadas: {acciones}")
     return base, acciones
 
 
 @st.cache_resource(show_spinner="Cargando el modelo de embeddings Multilingual-E5 (la primera vez tarda un minuto)…")
 def obtener_embedder(preferencia):
-    return rc.crear_embedder(preferencia, rc.leer_secreto("OPENAI_API_KEY"))
+    registro(f"cargando embeddings ({preferencia})")
+    resultado = rc.crear_embedder(preferencia, rc.leer_secreto("OPENAI_API_KEY"))
+    registro(f"embeddings listos: {resultado[1]}")
+    return resultado
 
 
 @st.cache_resource(show_spinner="Verificando el modelo de lenguaje…")
 def obtener_llm(proveedor):
-    return rc.ClienteLLM(proveedor, rc.leer_secreto(rc.PROVEEDORES[proveedor]["clave"]))
+    llm = rc.ClienteLLM(proveedor, rc.leer_secreto(rc.PROVEEDORES[proveedor]["clave"]))
+    registro(f"LLM listo: {llm.modelo}")
+    return llm
 
 
 @st.cache_data(show_spinner=False)
@@ -131,6 +150,8 @@ with st.sidebar:
                f"🎯 umbral de relevancia: coseno ≥ {rc.UMBRAL_RELEVANCIA[EMBEDDER.clave]:.3f}")
 
 bot = rc.ChatbotRAG(BASE, EMBEDDER, LLM, top_k=top_k) if LLM else None
+AVISO.empty()
+registro("interfaz lista")
 
 
 # --------------------------------------------------------------------------- utilidades de interfaz
@@ -317,6 +338,7 @@ with tab_indice:
     if not frag_df.empty:
         conteo = frag_df.groupby("doc_id").size().reset_index(name="fragmentos")
         conteo["guía"] = conteo["doc_id"].map(lambda d: rc.NOMBRE_CORTO.get(d, d))
+        import plotly.express as px
         fig = px.bar(conteo, x="fragmentos", y="guía", orientation="h", color="doc_id", text="fragmentos",
                      color_discrete_map=COLOR_DOC, height=190)
         fig.update_layout(showlegend=False, margin=dict(l=0, r=10, t=10, b=0), yaxis_title=None)

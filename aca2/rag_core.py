@@ -350,7 +350,7 @@ def citas_en(texto, n):
 
 
 def es_abstencion(texto):
-    return "no encontré esa información" in normalizar(texto)
+    return "no encontre esa informacion" in normalizar(texto)      # se compara sin tildes
 
 
 # ==== 6. Canalización RAG: reformular → recuperar → verificar umbral → generar → citar
