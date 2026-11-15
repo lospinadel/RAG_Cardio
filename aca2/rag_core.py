@@ -16,7 +16,6 @@ import uuid
 from dataclasses import dataclass, field
 from pathlib import Path
 
-# pyrefly: ignore[missing-import]
 import numpy as np
 
 try:
@@ -527,3 +526,10 @@ def evaluar_fidelidad(llm, pregunta, fragmentos, respuesta):
     except Exception:
         veredicto = {"fiel": None, "afirmaciones_sin_respaldo": [], "responde_la_pregunta": None, "error": texto[:200]}
     return veredicto
+
+
+# ==== 10. Arranque directo (no forma parte del notebook)
+if __name__ == "__main__":
+    # Si Streamlit se despliega con este archivo como principal, abre la interfaz de app.py
+    import runpy
+    runpy.run_path(str(RUTA_BASE / "app.py"), run_name="__main__")
