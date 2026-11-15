@@ -16,6 +16,7 @@ import uuid
 from dataclasses import dataclass, field
 from pathlib import Path
 
+# pyrefly: ignore[missing-import]
 import numpy as np
 
 try:
